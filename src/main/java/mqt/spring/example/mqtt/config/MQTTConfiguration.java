@@ -6,9 +6,9 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,8 +21,8 @@ import java.util.List;
 @Configuration
 public class MQTTConfiguration {
 
-    @Value("CLOUDMQTT_URL")
-    private String mqqt_url;
+    @Autowired
+    private Environment environment;
 
 
     @Bean
@@ -40,7 +40,7 @@ public class MQTTConfiguration {
     @Autowired
     public MqttClient connect(MQTTSubscriber callback) throws MqttException, URISyntaxException {
         MqttConnectOptions connOpt = new MqttConnectOptions();
-
+        String mqqt_url = environment.getProperty("CLOUDMQTT_URL");
         URI url = new URI(mqqt_url);
         System.out.println("Test" + mqqt_url);
         String[] userAndPassword = url.getRawUserInfo().split(":");
