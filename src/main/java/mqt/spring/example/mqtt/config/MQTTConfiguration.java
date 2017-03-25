@@ -5,12 +5,15 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by wahrons on 25/03/17.
@@ -23,8 +26,14 @@ public class MQTTConfiguration {
 
 
     @Bean
-    public MQTTSubscriber crateMqttCallback() {
-        return MQTTSubscriber.builder().build();
+    @Qualifier("cache")
+    public List cacheList() {
+        return new ArrayList();
+    }
+
+    @Bean
+    public MQTTSubscriber crateMqttCallback(@Qualifier("cache") List cache) {
+        return new MQTTSubscriber(cache);
     }
 
     @Bean
@@ -33,7 +42,7 @@ public class MQTTConfiguration {
         MqttConnectOptions connOpt = new MqttConnectOptions();
 
         URI url = new URI(mqqt_url);
-        System.out.println("Test"+mqqt_url);
+        System.out.println("Test" + mqqt_url);
         String[] userAndPassword = url.getRawUserInfo().split(":");
         String broker_url = new StringBuilder()
                 .append("tcp://")
